@@ -1,0 +1,5 @@
+build/
+# Wercker
+.wercker
+coverage
+parser.js
