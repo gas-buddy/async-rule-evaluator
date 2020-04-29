@@ -2,8 +2,8 @@ import tap from 'tap';
 import { toFunction } from '../src';
 
 let counter = 0;
-const doc1 = { category: 'meal', obj: { num: 6, str: 'gasbuddy', more: { cowbell: true } } };
-const doc2 = { category: 'dessert', obj: { num: 1, str: 'gasbuddy' } };
+const doc1 = { category: 'meal', obj: { num: 6, str: 'gasbuddy', more: { cowbell: true } }, foo: ['green'] };
+const doc2 = { category: 'dessert', obj: { num: 1, str: 'gasbuddy' }, foo: ['blue', 'red', 'green'] };
 const doc3 = {
   async delayed() {
     return new Promise(accept => setTimeout(() => accept('meal'), 100));
@@ -52,6 +52,13 @@ tap.test('test_function', (test) => {
     filter = toFunction('cached > 0 and cached == 1 and cached != 2');
     t.ok(await filter(doc3), 'Should match intended target');
     t.notOk(await filter(doc2), 'Should not match unintended target');
+  });
+
+  test.test('inverted array match', async (t) => {
+    const filter = toFunction('"red" in foo');
+    t.ok(await filter(doc2), 'Should match intended target');
+    t.notOk(await filter(doc1), 'Should not match unintended target');
+    t.notOk(await filter(doc3), 'Should not match unintended target');
   });
 
   test.test('event interception', (t) => {
