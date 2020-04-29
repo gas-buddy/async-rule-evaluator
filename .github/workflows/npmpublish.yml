@@ -18,9 +18,9 @@ jobs:
           npm ci
         env:
           NPM_TOKEN: ${{secrets.npm_token}}
+      - run: npm run build
       - run: npm run lint
       - run: npm test
-      - run: npm run build
 
   publish-npm:
     needs: build
