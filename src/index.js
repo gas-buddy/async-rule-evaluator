@@ -71,6 +71,7 @@ export function toFunction(input, { functions, onParse, customResolver } = {}) {
     random: Math.random,
     round: Math.round,
     sqrt: Math.sqrt,
+    length(o) { return o?.length || 0; },
     ...functions,
   };
 

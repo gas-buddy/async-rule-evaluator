@@ -61,6 +61,16 @@ tap.test('test_function', (test) => {
     t.notOk(await filter(doc3), 'Should not match unintended target');
   });
 
+  test.test('array length match', async (t) => {
+    let filter = toFunction('foo.length > 1');
+    t.ok(await filter(doc2), 'Should match intended target');
+    t.notOk(await filter(doc1), 'Should not match unintended target');
+    t.notOk(await filter(doc3), 'Should not match unintended target');
+
+    filter = toFunction('length(foo) == 0');
+    t.ok(await filter(doc3), 'Should match intended target');
+  });
+
   test.test('event interception', (t) => {
     let code;
     toFunction('transactions <= 5 and abs(profit) > 20.5', {
