@@ -92,8 +92,7 @@ export function toFunction(input, { functions, onParse, customResolver } = {}) {
   tree.forEach(toJs);
   js.push(';');
 
-  const cachedPromises = new WeakMap();
-  async function prop(name, obj) {
+  async function prop(name, obj, cachedPromises) {
     if (name === 'true') { return 1; }
     if (name === 'false') { return 0; }
 
@@ -127,7 +126,7 @@ export function toFunction(input, { functions, onParse, customResolver } = {}) {
     }
     return (index && index === length) ? current : undefined;
   }
-  const func = new AsyncFunction('fns', 'std', 'prop', 'data', js.join(''));
+  const func = new AsyncFunction('fns', 'std', 'prop', 'data', 'cache', js.join(''));
 
   if (onParse) {
     onParse({
@@ -139,5 +138,5 @@ export function toFunction(input, { functions, onParse, customResolver } = {}) {
     });
   }
 
-  return async function asyncRuleEvaluator(data) { return func(allFunctions, std, customResolver || prop, data); };
+  return async function asyncRuleEvaluator(data) { return func(allFunctions, std, customResolver || prop, data, new WeakMap()); };
 }
