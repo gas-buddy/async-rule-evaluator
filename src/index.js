@@ -91,8 +91,9 @@ export function toFunction(input, { functions, onParse, customResolver } = {}) {
   }
   tree.forEach(toJs);
   js.push(';');
+  const func = new AsyncFunction('fns', 'std', 'prop', 'data', js.join(''));
 
-  async function prop(name, obj, cachedPromises) {
+  async function prop(cachedPromises, name, obj) {
     if (name === 'true') { return 1; }
     if (name === 'false') { return 0; }
 
@@ -112,7 +113,10 @@ export function toFunction(input, { functions, onParse, customResolver } = {}) {
         if (cachedValue) {
           currentVal = cachedValue;
         } else {
-          currentVal = currentVal(obj, current, name);
+          const boundProp = cachedPromises.get(func);
+          // By passing boundProp to the fn, it can "depend" on other promises
+          // and still get the cache benefits
+          currentVal = currentVal(boundProp, obj, current, name);
           if (!cacheEntry) {
             cacheEntry = {};
             cachedPromises.set(current, cacheEntry);
@@ -126,7 +130,6 @@ export function toFunction(input, { functions, onParse, customResolver } = {}) {
     }
     return (index && index === length) ? current : undefined;
   }
-  const func = new AsyncFunction('fns', 'std', 'prop', 'data', 'cache', js.join(''));
 
   if (onParse) {
     onParse({
@@ -138,5 +141,11 @@ export function toFunction(input, { functions, onParse, customResolver } = {}) {
     });
   }
 
-  return async function asyncRuleEvaluator(data) { return func(allFunctions, std, customResolver || prop, data, new WeakMap()); };
+  return async function asyncRuleEvaluator(data) {
+    const cache = new WeakMap();
+    const boundProp = prop.bind(data, cache);
+    // This is a bit weird, but lets us pass the bound prop resolver to functions
+    cache.set(func, boundProp);
+    return func(allFunctions, std, customResolver || boundProp, data, new WeakMap());
+  };
 }
