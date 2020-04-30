@@ -1,5 +1,5 @@
 import tap from 'tap';
-import { toFunction } from '../src';
+import { toFunction, resetObjectResolver } from '../src';
 
 let counter = 0;
 const doc1 = { category: 'meal', obj: { num: 6, str: 'gasbuddy', more: { cowbell: true } }, foo: ['green'] };
@@ -32,7 +32,7 @@ tap.test('test_function', (test) => {
   });
 
   test.test('deep property match', async (t) => {
-    let filter = toFunction('obj.more.cowbell == true');
+    let filter = toFunction('obj.more.cowbell');
     t.ok(await filter(doc1), 'Should match intended target');
     t.notOk(await filter(doc2), 'Should not match unintended target');
 
@@ -52,6 +52,9 @@ tap.test('test_function', (test) => {
     filter = toFunction('cached > 0 and cached == 1 and cached != 2');
     t.ok(await filter(doc3), 'Should match intended target');
     t.notOk(await filter(doc2), 'Should not match unintended target');
+    resetObjectResolver(doc3);
+    filter = toFunction('cached == 2 and cached <= 2');
+    t.ok(await filter(doc3), 'Should match intended target');
   });
 
   test.test('inverted array match', async (t) => {
@@ -78,8 +81,8 @@ tap.test('test_function', (test) => {
         code = functionObject.toString();
       },
     });
-    t.ok(code.startsWith('async function anonymous(fns,std,prop,data'), 'Code should start with expected value');
-    t.ok(code.includes('return (Number((Number((await prop("transactions", data))<=(5)))&&(Number(((std.isfn(fns, "abs") ? fns["abs"]((await prop("profit", data))) : std.unknown("abs")))> (20.5)))));'), 'Code should match expectation');
+    t.ok(code.startsWith('async function anonymous(fns,std,prop'), 'Code should start with expected value');
+    t.ok(code.includes('return (Number((Number((await prop("transactions"))<=(5)))&&(Number(((std.isfn(fns, "abs") ? fns["abs"]((await prop("profit"))) : std.unknown("abs")))> (20.5)))));'), 'Code should match expectation');
     t.end();
   });
 

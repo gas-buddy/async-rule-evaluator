@@ -106,7 +106,7 @@ const grammar = {
       ['( array , e )', code(['[', 2, ',', 4, ']'])],
       ['NUMBER', code([1])],
       ['STRING', code([1])],
-      ['SYMBOL', code(['await prop(', 1, ', data)'])],
+      ['SYMBOL', code(['await prop(', 1, ')'])],
       ['SYMBOL ( )', code(['(std.isfn(fns, ', 1, ') ? fns[', 1, ']() : std.unknown(', 1, '))'])],
       ['SYMBOL ( argsList )', code(['(std.isfn(fns, ', 1, ') ? fns[', 1, '](', 3, ') : std.unknown(', 1, '))'])],
       ['e in e', code(['std.isSubset(', 1, ', ', 3, ')'])],

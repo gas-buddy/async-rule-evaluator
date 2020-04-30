@@ -2,6 +2,7 @@ import toPath from 'lodash.topath';
 import { parser } from '../parser';
 
 const AsyncFunction = Object.getPrototypeOf(async () => true).constructor;
+const OBJECT_RESOLVER = Symbol('Property resolver assigned to filtered objects');
 
 const std = {
   isfn(fns, funcName) {
@@ -60,6 +61,56 @@ export function parse(input) {
   return parser.parse(input);
 }
 
+export function resetObjectResolver(obj) {
+  delete obj[OBJECT_RESOLVER];
+}
+
+export function getObjectResolver(obj) {
+  if (!obj) {
+    return () => undefined;
+  }
+
+  if (obj[OBJECT_RESOLVER]) {
+    return obj[OBJECT_RESOLVER];
+  }
+  const cachedPromises = new WeakMap();
+  async function objectResolver(name) {
+    let current = obj;
+    const path = toPath(name);
+    let index = 0;
+    const { length } = path;
+
+    // Walk the specified path, looking for functions and promises along the way.
+    // If we find a function, invoke it and cache the result (which is often a promise)
+    while (current != null && index < length) {
+      const key = String(path[index]);
+      let currentVal = Object.prototype.hasOwnProperty.call(current, key) ? current[key] : undefined;
+      if (typeof currentVal === 'function') {
+        let cacheEntry = cachedPromises.get(current);
+        const cachedValue = cacheEntry?.[key];
+        if (cachedValue) {
+          currentVal = cachedValue;
+        } else {
+          // By passing objectResolver to the fn, it can "depend" on other promises
+          // and still get the cache benefits
+          currentVal = currentVal(objectResolver, obj, current, name);
+          if (!cacheEntry) {
+            cacheEntry = {};
+            cachedPromises.set(current, cacheEntry);
+          }
+          cacheEntry[key] = currentVal;
+        }
+      }
+      // eslint-disable-next-line no-await-in-loop
+      current = await currentVal;
+      index += 1;
+    }
+    return (index && index === length) ? current : undefined;
+  }
+  Object.defineProperty(obj, OBJECT_RESOLVER, { value: objectResolver, enumerable: false, configurable: true });
+  return objectResolver;
+}
+
 export function toFunction(input, { functions, onParse, customResolver } = {}) {
   const allFunctions = {
     abs: Math.abs,
@@ -92,61 +143,18 @@ export function toFunction(input, { functions, onParse, customResolver } = {}) {
   }
   tree.forEach(toJs);
   js.push(';');
-  const func = new AsyncFunction('fns', 'std', 'prop', 'data', js.join(''));
-
-  async function prop(cachedPromises, name, obj) {
-    if (name === 'true') { return 1; }
-    if (name === 'false') { return 0; }
-
-    let current = obj;
-    const path = toPath(name);
-    let index = 0;
-    const { length } = path;
-
-    // Walk the specified path, looking for functions and promises along the way.
-    // If we find a function, invoke it and cache the result (which is often a promise)
-    while (current != null && index < length) {
-      const key = String(path[index]);
-      let currentVal = Object.prototype.hasOwnProperty.call(current, key) ? current[key] : undefined;
-      if (typeof currentVal === 'function') {
-        let cacheEntry = cachedPromises.get(current);
-        const cachedValue = cacheEntry?.[key];
-        if (cachedValue) {
-          currentVal = cachedValue;
-        } else {
-          const boundProp = cachedPromises.get(func);
-          // By passing boundProp to the fn, it can "depend" on other promises
-          // and still get the cache benefits
-          currentVal = currentVal(boundProp, obj, current, name);
-          if (!cacheEntry) {
-            cacheEntry = {};
-            cachedPromises.set(current, cacheEntry);
-          }
-          cacheEntry[key] = currentVal;
-        }
-      }
-      // eslint-disable-next-line no-await-in-loop
-      current = await currentVal;
-      index += 1;
-    }
-    return (index && index === length) ? current : undefined;
-  }
+  const func = new AsyncFunction('fns', 'std', 'prop', js.join(''));
 
   if (onParse) {
     onParse({
       input,
       tree,
-      resolver: prop,
       functionObject: func,
       pathReferences,
     });
   }
 
   return async function asyncRuleEvaluator(data) {
-    const cache = new WeakMap();
-    const boundProp = prop.bind(data, cache);
-    // This is a bit weird, but lets us pass the bound prop resolver to functions
-    cache.set(func, boundProp);
-    return func(allFunctions, std, customResolver || boundProp, data, new WeakMap());
+    return func(allFunctions, std, customResolver || getObjectResolver(data));
   };
 }
