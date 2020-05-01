@@ -93,6 +93,8 @@ export function getObjectResolver(obj) {
           // By passing objectResolver to the fn, it can "depend" on other promises
           // and still get the cache benefits
           currentVal = currentVal(objectResolver, obj, current, name);
+          // Need to get this again because someone else may have made it
+          cacheEntry = cachedPromises.get(current);
           if (!cacheEntry) {
             cacheEntry = {};
             cachedPromises.set(current, cacheEntry);
