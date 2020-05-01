@@ -2,6 +2,7 @@ import tap from 'tap';
 import { toFunction, resetObjectResolver } from '../src';
 
 let counter = 0;
+let nullCounter = 0;
 const doc1 = { category: 'meal', obj: { num: 6, str: 'gasbuddy', more: { cowbell: true } }, foo: ['green'] };
 const doc2 = { category: 'dessert', obj: { num: 1, str: 'gasbuddy' }, foo: ['blue', 'red', 'green'] };
 const doc3 = {
@@ -11,6 +12,10 @@ const doc3 = {
   cached() {
     counter += 1;
     return counter;
+  },
+  returnNull() {
+    nullCounter += 1;
+    return null;
   },
   async thrown() {
     return new Promise((accept, reject) => setTimeout(() => reject(new Error('Foobar')), 100));
@@ -55,6 +60,13 @@ tap.test('test_function', (test) => {
     resetObjectResolver(doc3);
     filter = toFunction('cached == 2 and cached <= 2');
     t.ok(await filter(doc3), 'Should match intended target');
+
+    nullCounter = 0;
+    filter = toFunction('not returnNull');
+    await filter(doc3);
+    await filter(doc3);
+    t.strictEquals(nullCounter, 1, 'Should only run the promise once');
+
   });
 
   test.test('inverted array match', async (t) => {

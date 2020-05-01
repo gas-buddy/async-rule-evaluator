@@ -87,9 +87,8 @@ export function getObjectResolver(obj) {
       let currentVal = Object.prototype.hasOwnProperty.call(current, key) ? current[key] : undefined;
       if (typeof currentVal === 'function') {
         let cacheEntry = cachedPromises.get(current);
-        const cachedValue = cacheEntry?.[key];
-        if (cachedValue) {
-          currentVal = cachedValue;
+        if (cacheEntry && Object.hasOwnProperty.call(cacheEntry, key)) {
+          currentVal = cacheEntry[key];
         } else {
           // By passing objectResolver to the fn, it can "depend" on other promises
           // and still get the cache benefits
