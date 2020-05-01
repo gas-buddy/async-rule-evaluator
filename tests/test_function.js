@@ -22,7 +22,6 @@ const doc3 = {
   },
 };
 
-
 tap.test('test_function', (test) => {
   test.test('simple property match', async (t) => {
     const filter = toFunction('category == "meal"');
@@ -66,7 +65,6 @@ tap.test('test_function', (test) => {
     await filter(doc3);
     await filter(doc3);
     t.strictEquals(nullCounter, 1, 'Should only run the promise once');
-
   });
 
   test.test('inverted array match', async (t) => {
