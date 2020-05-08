@@ -84,6 +84,25 @@ tap.test('test_function', (test) => {
     t.ok(await filter(doc3), 'Should match intended target');
   });
 
+  test.test('multiparam custom function', async (t) => {
+    let filter = toFunction('add(1, "3") == 4', {
+      functions: {
+        add(a, b) { return Number(a) + Number(b); },
+      },
+    });
+    t.ok(await filter({}), 'Should match intended target');
+
+    filter = toFunction('add(\'1\', "3", 5) == nine', {
+      functions: {
+        add(...args) {
+          return args.reduce((prev, cur) => (Number(cur) + prev), 0);
+        },
+      },
+    });
+    t.ok(await filter({ nine: 9, 1: 1 }), 'Should match intended target');
+    t.notOk(await filter({}), 'Should not match unintended target');
+  });
+
   test.test('event interception', (t) => {
     let code;
     toFunction('transactions <= 5 and abs(profit) > 20.5', {
