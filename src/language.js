@@ -131,7 +131,11 @@ const parser = new Parser(grammar);
 
 export default parser;
 
+function emptyModuleMain() {
+
+}
+
 if (require.main === module) {
-  const parserSource = parser.generate();
+  const parserSource = parser.generate({ moduleMain: emptyModuleMain });
   fs.writeFileSync(path.join(__dirname, '..', 'parser.js'), parserSource, 'utf8');
 }
