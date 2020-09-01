@@ -84,7 +84,7 @@ tap.test('Array support', async (arrayTests) => {
   });
 
   arrayTests.test('nested array', async (t) => {
-    const hasIt = toFunction('testNear(input, [[1],[2],[3]])', {
+    const hasIt = toFunction('testNear(input, [[1,2],[2,4],[3,65],["foo", "bar", 1 + 2],[6+3]])', {
       functions: {
         testNear(input, arr) {
           return arr.findIndex(subArr => subArr[0] === input) >= 0 ? 1 : 0;
@@ -93,5 +93,6 @@ tap.test('Array support', async (arrayTests) => {
     });
     t.strictEqual(await hasIt({ input: 1 }), 1);
     t.strictEqual(await hasIt({ input: 6 }), 0);
+    t.strictEqual(await hasIt({ input: 9 }), 1);
   });
 });

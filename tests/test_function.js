@@ -84,6 +84,16 @@ tap.test('test_function', (test) => {
     t.ok(await filter(doc3), 'Should match intended target');
   });
 
+  test.test('string lower', async (t) => {
+    let filter = toFunction('lower(foo) == "brookline"');
+    t.ok(await filter({ foo: 'BROOKLINE' }), 'Should match intended target');
+    t.ok(await filter({ foo: 'brookline' }), 'Should match intended target');
+    t.notOk(await filter({ foo: 'brooklinen' }), 'Should not match unintended target');
+
+    filter = toFunction('lower(foo) ~= "^brookline"');
+    t.ok(await filter({ foo: 'BROOKLINE' }), 'Should match intended target');
+  });
+
   test.test('multiparam custom function', async (t) => {
     let filter = toFunction('add(1, "3") == 4', {
       functions: {

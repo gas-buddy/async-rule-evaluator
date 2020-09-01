@@ -130,6 +130,12 @@ export function toFunction(input, { functions, onParse, customResolver } = {}) {
     round: Math.round,
     sqrt: Math.sqrt,
     length(o) { return o?.length || 0; },
+    lower(a) {
+      if (a === null || a === undefined) {
+        return a;
+      }
+      return a.toString().toLocaleLowerCase();
+    },
     ...functions,
   };
 
