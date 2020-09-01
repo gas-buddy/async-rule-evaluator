@@ -79,8 +79,10 @@ x <= y | Less than or equal to
 x > y | Greater than
 x >= y | Greater than or equal to
 x ~= y | Regular expression match
-x in (a, b, c) | Equivalent to (x == a or x == b or x == c)
+x in (a, b, c) | Equivalent to (x === a or x === b or x === c)
 x not in (a, b, c) | Equivalent to (x != a and x != b and x != c)
+x in~ (a, b, c) | Equivalent to (String(x) == String(a) or String(x) == String(b) or String(x) == String(c))
+x not in~ (a, b, c) | Equivalent to (String(x) != String(a) and String(x) != String(b) and String(x) != String(c))
 
 Boolean logic | Description
 --- | ---
@@ -94,6 +96,7 @@ Objects and arrays | Description
 --- | ---
 (a, b, c) | Array
 a in b | Array a is a subset of array b
+a in~ b | Array a is a subset of array b using string conversion for comparison
 x.y | Property y of object x (x can be a function/promise, y can be a function/promise)
 
 Built-in functions | Description

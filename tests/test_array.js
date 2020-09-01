@@ -66,4 +66,20 @@ tap.test('Array support', async (arrayTests) => {
     t.strictEquals(await kitchenSink({ lowNumber: 1.5, a: 10, b: 12, foo: false }), 1.1);
     t.strictEquals(await kitchenSink({ lowNumber: 3.5, a: 10, b: 12, foo: false }), 9.4);
   });
+
+  arrayTests.test('include', async (t) => {
+    const hasOne = toFunction('1 in foo');
+    t.strictEqual(await hasOne({ foo: [] }), 0);
+    t.strictEqual(await hasOne({ foo: [0, 2, 3] }), 0);
+    t.strictEqual(await hasOne({ foo: [6, 1, 3] }), 1);
+
+    const hasOneIsh = toFunction('1 in~ foo');
+    t.strictEqual(await hasOneIsh({ foo: [6, '1', 3] }), 1);
+    t.strictEqual(await hasOneIsh({ foo: [6, 1, 3] }), 1);
+
+    const notHasOneIsh = toFunction('1 not in~ foo');
+    t.strictEqual(await notHasOneIsh({ foo: [6, '1', 3] }), 0);
+    t.strictEqual(await notHasOneIsh({ foo: [6, 1, 3] }), 0);
+    t.strictEqual(await notHasOneIsh({ foo: [6, 3] }), 1);
+  });
 });

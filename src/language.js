@@ -34,6 +34,7 @@ const grammar = {
       ['and[^\\w]', 'return "and";'],
       ['or[^\\w]', 'return "or";'],
       ['not[^\\w]', 'return "not";'],
+      ['in~[^\\w]', 'return "inexactin";'],
       ['in[^\\w]', 'return "in";'],
 
       ['\\s+', ''], // skip whitespace
@@ -69,6 +70,7 @@ const grammar = {
     ['left', '?', ':'],
     ['left', 'or'],
     ['left', 'and'],
+    ['left', 'inexactin'],
     ['left', 'in'],
     ['left', '==', '!=', '~='],
     ['left', '<', '<=', '>', '>='],
@@ -110,7 +112,9 @@ const grammar = {
       ['SYMBOL ( )', code(['(std.isfn(fns, ', 1, ') ? fns[', 1, ']() : std.unknown(', 1, '))'])],
       ['SYMBOL ( argsList )', code(['(std.isfn(fns, ', 1, ') ? fns[', 1, '](', 3, ') : std.unknown(', 1, '))'])],
       ['e in e', code(['std.isSubset(', 1, ', ', 3, ')'])],
+      ['e inexactin e', code(['std.isSubsetInexact(', 1, ', ', 3, ')'])],
       ['e not in e', code(['+!std.isSubset(', 1, ', ', 4, ')'])],
+      ['e not inexactin e', code(['+!std.isSubsetInexact(', 1, ', ', 4, ')'])],
     ],
     argsList: [
       ['e', code([1], true)],

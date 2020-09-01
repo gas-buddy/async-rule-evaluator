@@ -29,6 +29,13 @@ const std = {
     return +A.every(val => B.includes(val));
   },
 
+  isSubsetInexact(a, b) {
+    const A = std.coerceArray(a);
+    const B = std.coerceArray(b);
+    console.log('ISSIN', A, B, +A.every(val => B.findIndex(v => (String(v) === String(val))) >= 0));
+    return +A.every(val => B.findIndex(v => (String(v) === String(val))) >= 0);
+  },
+
   buildString(inQuote, inLiteral) {
     const quote = String(inQuote)[0];
     const literal = String(inLiteral);
