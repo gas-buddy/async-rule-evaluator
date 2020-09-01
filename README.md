@@ -90,11 +90,12 @@ x or y | Boolean or
 x and y | Boolean and
 not x | Boolean not
 x ? y : z | If boolean x, value y, else z
-( x ) | Explicity operator precedence
+( x ) | Explicit operator precedence
 
 Objects and arrays | Description
 --- | ---
 (a, b, c) | Array
+[a, b, c] | Array (synonym)
 a in b | Array a is a subset of array b
 a in~ b | Array a is a subset of array b using string conversion for comparison
 x.y | Property y of object x (x can be a function/promise, y can be a function/promise)
