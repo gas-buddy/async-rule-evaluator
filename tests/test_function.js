@@ -94,6 +94,13 @@ tap.test('test_function', (test) => {
     t.ok(await filter({ foo: 'BROOKLINE' }), 'Should match intended target');
   });
 
+  test.test('substring', async (t) => {
+    const filter = toFunction('substr(foo, 0, 5) == "01234"');
+    t.ok(await filter({ foo: '0123456789' }), 'Should match intended target');
+    t.ok(await filter({ foo: '01234' }), 'Should match intended target');
+    t.notOk(await filter({ foo: '12345678' }), 'Should not match unintended target');
+  });
+
   test.test('multiparam custom function', async (t) => {
     let filter = toFunction('add(1, "3") == 4', {
       functions: {

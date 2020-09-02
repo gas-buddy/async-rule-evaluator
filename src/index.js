@@ -136,6 +136,12 @@ export function toFunction(input, { functions, onParse, customResolver } = {}) {
       }
       return a.toString().toLocaleLowerCase();
     },
+    substr(a, from, length) {
+      if (a === null || a === undefined) {
+        return a;
+      }
+      return a.toString().substr(from, length);
+    },
     ...functions,
   };
 

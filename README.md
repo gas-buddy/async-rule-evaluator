@@ -113,6 +113,7 @@ round(x) | Round floating point
 length(x) | Return the length of an array (or the length property of an object), or 0 if x is falsy
 lower(x) | If x is null or undefined, return it, else return x.toString().toLocaleLowerCase()
 sqrt(x) | Square root
+substr(x, start, end) | Get a part of a string
 
 Operator precedence follows that of any sane language.
 
