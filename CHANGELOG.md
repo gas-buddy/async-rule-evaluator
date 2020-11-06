@@ -16,6 +16,6 @@
 * Added getObjectResolver and resetObjectResolver so you can participate in the fun too
 * Removed true and false from the default property resolver. The spirit of boolean comparison isn't done that way in filtrex
 
-1.4.0
+1.6.0
 =====
 * Previously, an object would convert to NaN in boolean operations, causing "odd" behavior. Now, all objects will be converted to 1 when used in a context where a number is required. This is done by using std.numify (a function we wrote) instead of the generic Number constructor. We don't consider this a breaking change since the behavior before seemed bug-like and underspecified.
