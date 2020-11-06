@@ -1,6 +1,6 @@
 {
   "name": "async-rule-evaluator",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "A dynamic rule evaluation DSL that supports lazy and asynchronous data resolution",
   "main": "build/index.js",
   "scripts": {
