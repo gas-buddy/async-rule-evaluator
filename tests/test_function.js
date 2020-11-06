@@ -128,7 +128,7 @@ tap.test('test_function', (test) => {
       },
     });
     t.ok(code.startsWith('async function anonymous(fns,std,prop'), 'Code should start with expected value');
-    t.ok(code.includes('return (Number((Number((await prop("transactions"))<=(5)))&&(Number(((std.isfn(fns, "abs") ? fns["abs"]((await prop("profit"))) : std.unknown("abs")))> (20.5)))));'), 'Code should match expectation');
+    t.ok(code.includes('return (std.numify((std.numify((await prop("transactions"))<=(5)))&&(std.numify(((std.isfn(fns, "abs") ? fns["abs"]((await prop("profit"))) : std.unknown("abs")))> (20.5)))));'), 'Code should match expectation');
     t.end();
   });
 

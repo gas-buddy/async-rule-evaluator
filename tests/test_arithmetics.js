@@ -77,6 +77,10 @@ tap.test('Arithmetics', (arithmetic) => {
     t.strictEquals(await runFilter('0 or 1'), 1);
     t.strictEquals(await runFilter('1 or 0'), 1);
     t.strictEquals(await runFilter('1 or 1'), 1);
+    t.strictEquals(await runFilter('this_is_undefined.really or 1'), 1);
+    t.strictEquals(await runFilter('thisis.really or 0', { thisis: {} }), 0);
+    t.strictEquals(await runFilter('thisis.really or 1', { thisis: {} }), 1);
+    t.strictEquals(await runFilter('thisis.really or 0', { thisis: { really: {} } }), 1);
     t.strictEquals(await runFilter('not 0'), 1);
     t.strictEquals(await runFilter('not 1'), 0);
     t.strictEquals(await runFilter('(0 and 1) or 1'), 1);

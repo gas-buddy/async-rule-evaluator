@@ -5,6 +5,13 @@ const AsyncFunction = Object.getPrototypeOf(async () => true).constructor;
 const OBJECT_RESOLVER = Symbol('Property resolver assigned to filtered objects');
 
 const std = {
+  numify(v) {
+    if (typeof v === 'object') {
+      return 1;
+    }
+    return Number(v);
+  },
+
   isfn(fns, funcName) {
     return Object.hasOwnProperty.call(fns, funcName) && typeof fns[funcName] === 'function';
   },
