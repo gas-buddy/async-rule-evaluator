@@ -6,7 +6,7 @@ const OBJECT_RESOLVER = Symbol('Property resolver assigned to filtered objects')
 
 const std = {
   numify(v) {
-    if (typeof v === 'object') {
+    if (v !== null && typeof v === 'object') {
       return 1;
     }
     return Number(v);

@@ -27,5 +27,10 @@ tap.test('Object support', async (obj) => {
     t.throws(() => toFunction('123.456hey'));
   });
 
+  obj.test('null should be falsy', async (t) => {
+    const checkfornull = toFunction('myobj.myprop');
+    t.notOk(await checkfornull({ myobj: { myprop: null } }));
+  });
+
   obj.end();
 });
