@@ -7,7 +7,7 @@ const doc1 = { category: 'meal', obj: { num: 6, str: 'gasbuddy', more: { cowbell
 const doc2 = { category: 'dessert', obj: { num: 1, str: 'gasbuddy' }, foo: ['blue', 'red', 'green'] };
 const doc3 = {
   async delayed() {
-    return new Promise(accept => setTimeout(() => accept('meal'), 100));
+    return new Promise((accept) => setTimeout(() => accept('meal'), 100));
   },
   cached() {
     counter += 1;
@@ -64,7 +64,7 @@ tap.test('test_function', (test) => {
     filter = toFunction('not returnNull');
     await filter(doc3);
     await filter(doc3);
-    t.strictEquals(nullCounter, 1, 'Should only run the promise once');
+    t.equal(nullCounter, 1, 'Should only run the promise once');
   });
 
   test.test('inverted array match', async (t) => {

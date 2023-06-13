@@ -114,6 +114,10 @@ length(x) | Return the length of an array (or the length property of an object),
 lower(x) | If x is null or undefined, return it, else return x.toString().toLocaleLowerCase()
 sqrt(x) | Square root
 substr(x, start, end) | Get a part of a string
+unique(x) | Get unique elements in the array x
+union(a, b, c...) | Union of arrays (variable length of args)
+intersection(a, b, c...) | Intersection of arrays (variable length of args)
+difference(a, b, c...) | Remove all elements of a that are in b, c...
 
 Operator precedence follows that of any sane language.
 

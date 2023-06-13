@@ -1,4 +1,8 @@
 import toPath from 'lodash.topath';
+import unique from 'lodash.uniq';
+import union from 'lodash.union';
+import intersection from 'lodash.intersection';
+import difference from 'lodash.difference';
 import { parser } from '../parser';
 
 const AsyncFunction = Object.getPrototypeOf(async () => true).constructor;
@@ -33,13 +37,13 @@ const std = {
   isSubset(a, b) {
     const A = std.coerceArray(a);
     const B = std.coerceArray(b);
-    return +A.every(val => B.includes(val));
+    return +A.every((val) => B.includes(val));
   },
 
   isSubsetInexact(a, b) {
     const A = std.coerceArray(a);
     const B = std.coerceArray(b);
-    return +A.every(val => B.findIndex(v => (String(v) === String(val))) >= 0);
+    return +A.every((val) => B.findIndex((v) => (String(v) === String(val))) >= 0);
   },
 
   buildString(inQuote, inLiteral) {
@@ -148,6 +152,18 @@ export function toFunction(input, { functions, onParse, customResolver } = {}) {
         return a;
       }
       return a.toString().substr(from, length);
+    },
+    union(...sets) {
+      return union(...sets.map(std.coerceArray));
+    },
+    intersection(...sets) {
+      return intersection(...sets.map(std.coerceArray));
+    },
+    difference(...sets) {
+      return difference(...sets.map(std.coerceArray));
+    },
+    unique(set) {
+      return unique(std.coerceArray(set));
     },
     ...functions,
   };

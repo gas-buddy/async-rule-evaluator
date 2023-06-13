@@ -4,7 +4,7 @@ import path from 'path';
 import { Parser } from 'jison';
 
 function code(args, skipParentheses) {
-  const argsJs = args.map(arg => (typeof arg === 'number' ? `$${arg}` : JSON.stringify(arg))).join(',');
+  const argsJs = args.map((arg) => (typeof arg === 'number' ? `$${arg}` : JSON.stringify(arg))).join(',');
 
   return skipParentheses ? `$$ = [${argsJs}];` : `$$ = ["(", ${argsJs}, ")"];`;
 }
