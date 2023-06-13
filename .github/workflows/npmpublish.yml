@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
         with:
-          node-version: 10
+          node-version: 16
       - run: |
           npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
           npm ci
@@ -29,7 +29,7 @@ jobs:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
         with:
-          node-version: 10
+          node-version: 16
           registry-url: https://registry.npmjs.org/
       - run: npm ci
         env:
